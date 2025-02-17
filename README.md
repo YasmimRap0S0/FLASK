@@ -40,7 +40,7 @@ from flasgger import Swagger # type: ignore
 - SQLAlchemy: Importa o SQLAlchemy, que é um ORM (Object-Relational Mapping) que facilita a interação com o banco de dados.<br>
 - Flasgger: Permite que você documente e explore APIs com uma interface baseada no Swagger UI.<br>
 
-4. Crie uma instância para a aplicação
+4. Crie uma instância para a aplicação. 
 
 ```txt
 
