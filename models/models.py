@@ -7,7 +7,7 @@ class Pessoa(db.Model):
     __tablename__ = 'Pessoa'
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    esta_empregado = db.Column(db.Boolean, default=False) 
+    esta_empregado = db.Column(db.Boolean, default=False, nullable=False) 
 
     def dicionario(self):
         return {

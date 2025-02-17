@@ -24,6 +24,10 @@ pip install flask
 pip install flask_sqlalchemy
 pip install SQLAlchemy
 pip install flasgger
+pip install flask_cors
+pip install flask-Migrate
+pip install psycopg2
+
 ```
 
 3. Realize os importes no seu arquivo .py
@@ -34,19 +38,27 @@ from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger # type: ignore
 
+
 ```
 
 - Flask: Utilizamos o Flask para criar a aplicação, request lida com as requisições HTTP, jsonify facilita a criação de respostas JSON, e render_template renderiza templates HTML.<br>
 - SQLAlchemy: Importa o SQLAlchemy, que é um ORM (Object-Relational Mapping) que facilita a interação com o banco de dados.<br>
 - Flasgger: Permite que você documente e explore APIs com uma interface baseada no Swagger UI.<br>
 
-4. Crie uma instância para a aplicação. 
+4. Crie uma instância para a aplicação o CORS na sua aplicação
 
 ```txt
 
 app = Flask(__name__)
+CORS(app)
 
 ```
+
+5. Adicione a URI de conexão do seu banco de dados.
+postgresql://<username>:<password>@<hostname>:<port>/<database_name>
+
+6. 
+
 
 
 
