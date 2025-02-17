@@ -11,6 +11,10 @@ Características gerais:
 - Python 3.10 ou superior
 
 ## Dependências 
+
 - pip install flask
 -  pip install flask_sqlalchemy
 - pip install SQLAlchemy
+- pip install flasgger
+
+
