@@ -1,16 +1,13 @@
-from sqlalchemy.dialects.postgresql import UUID, TEXT
-from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
 # Modelo Pessoa 
 class Pessoa(db.Model):
     __tablename__ = 'Pessoa'
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=func.uuid_generate_v4())
+    id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    esta_empregado = db.Column(db.Boolean, nullable=False, default=False) 
+    esta_empregado = db.Column(db.Boolean, default=False) 
 
     def dicionario(self):
         return {
@@ -31,6 +28,6 @@ class Trabalho(db.Model):
         return {
             'id': self.id,
             'cargo': self.cargo,
-            'pessoa_id': self.pessoa_id,
+            'pessoa_id': str(self.pessoa_id),
             'pessoa': self.pessoa.dicionario()  # Inclui os detalhes da pessoa
         }

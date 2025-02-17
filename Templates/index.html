@@ -3,52 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Pessoa</title>
+    <title>FLASK</title>
 </head>
 <body>
-    <div>
-        <h1>Criar Pessoa</h1>
-        <form id="createPessoaForm">
-            <div>
-                <label for="nome">Nome</label>
-                <input type="text" id="nome" required>
-            </div>
-            <button type="submit">Criar</button>
-        </form>
-        <hr>
-        <h2>Pessoas</h2>
-        <ul id="pessoas-lista"></ul>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>
-        $('#createPessoaForm').on('submit', function(event) {
-            event.preventDefault();
-            const nome = $('#nome').val();
-    
-            $.ajax({
-                url: '/pessoas',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ nome: nome }),
-                success: function(response) {
-                    alert(response.message);
-                    fetchPessoas();  // Atualizar a lista de pessoas após a criação
-                }
-            });
-        });
-
-        function fetchPessoas() {
-            $.getJSON('/pessoas', function(data) {
-                const list = $('#pessoas-lista');
-                list.empty();
-                data.forEach(function(item) {
-                    const li = $('<li>').text(`ID: ${item.id}, Nome: ${item.nome}`);
-                    list.append(li);
-                });
-            });
-        }
-
-        fetchPessoas();
-    </script>
+   <h1>APLICAÇÃO WEB COM FLASK</h1>
 </body>
 </html>
