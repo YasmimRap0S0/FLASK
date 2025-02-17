@@ -1,19 +1,23 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flasgger import Swagger
+from flasgger import Swagger # type: ignore
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 swagger = Swagger(app)
-
 db = SQLAlchemy(app)
 
-# Modelo Pessoa atualizado sem a coluna idade
+# Modelo Pessoa 
 class Pessoa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
+
+class Trabalho(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cargo = db.Column(db.String(100), nullable = False)
+    pessoa_id = db.Column(db.Integer, db.ForeignKey('pessoa.id'), nullable=False)
+    pessoa = db.relationship('Pessoa', backref=db.backref('trabalhos', lazy=True))
+
 
 with app.app_context():
    ##  db.drop_all()  para excluir tabelas
