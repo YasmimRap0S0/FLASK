@@ -6,9 +6,9 @@ from config import swagger_config, swagger_template
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)  # Habilita CORS para todas as rotas
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5433/flask'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Banco de dados SQLite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -19,71 +19,6 @@ swagger = Swagger(app, config=swagger_config, template=swagger_template)
 @app.route('/')
 def index():
     return ('<h1>APLICAÇÃO WEB</h1>')
-
-# Rota para criar um trabalho
-@app.route('/api/trabalhos', methods=['POST'])
-def create_trabalho():
-    """
-    Cria um novo trabalho
-    ---
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          required:
-            - cargo
-          properties:
-            cargo:
-              type: string
-              description: Cargo da pessoa
-              example: Engenheiro
-    responses:
-      201:
-        description: Trabalho criado com sucesso
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-      400:
-        description: Requisição inválida
-    """
-    data = request.get_json()
-    if 'cargo' not in data:
-        return jsonify({'message': 'O campo "cargo" é obrigatório.'}), 400
-
-    novo_trabalho = Trabalho(cargo=data['cargo'])
-    db.session.add(novo_trabalho)
-    db.session.commit()
-    return jsonify({'message': 'Trabalho criado com sucesso!'}), 201
-
-# Rota para obter todos os trabalhos
-@app.route('/api/trabalhos', methods=['GET'])
-def get_trabalhos():
-    """
-    Retorna todos os trabalhos
-    ---
-    responses:
-      200:
-        description: Lista de trabalhos
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              cargo:
-                type: string
-    """
-    trabalhos = Trabalho.query.all()
-    result = [{
-        'id': str(trabalho.id),
-        'cargo': trabalho.cargo
-    } for trabalho in trabalhos]
-    return jsonify(result), 200
 
 # Rotas CRUD para Pessoa
 @app.route('/pessoas', methods=['POST'])
@@ -298,6 +233,71 @@ def get_pessoa(id):
             'cargo': pessoa.trabalho.cargo
         } if pessoa.trabalho else None
     }), 200
+
+# Rota para criar um trabalho
+@app.route('/trabalhos', methods=['POST'])
+def create_trabalho():
+    """
+    Cria um novo trabalho
+    ---
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - cargo
+          properties:
+            cargo:
+              type: string
+              description: Cargo da pessoa
+              example: Engenheiro
+    responses:
+      201:
+        description: Trabalho criado com sucesso
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+      400:
+        description: Requisição inválida
+    """
+    data = request.get_json()
+    if 'cargo' not in data:
+        return jsonify({'message': 'O campo "cargo" é obrigatório.'}), 400
+
+    novo_trabalho = Trabalho(cargo=data['cargo'])
+    db.session.add(novo_trabalho)
+    db.session.commit()
+    return jsonify({'message': 'Trabalho criado com sucesso!'}), 201
+
+@app.route('/trabalhos', methods=['GET'])
+def get_trabalhos():
+    """
+    Retorna todos os trabalhos
+    ---
+    responses:
+      200:
+        description: Lista de trabalhos
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              cargo:
+                type: string
+    """
+    trabalhos = Trabalho.query.all()
+    result = [{
+        'id': str(trabalho.id),
+        'cargo': trabalho.cargo
+    } for trabalho in trabalhos]
+    return jsonify(result), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080, host='0.0.0.0')
