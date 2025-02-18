@@ -1,8 +1,13 @@
-# FLASK
+
+## **PROJETO FLASK**
+- Integrantes: Anna Julia, Fabiana Campos, Larissa Samara, Rick Hill e Yasmim Raposo<br>
+- Acesso a TP: [TP](https://github.com/YasmimRap0S0/FLASK/blob/main/TP_FLASK.md)
+
+## **FLASK**
 
 O Flask é um microframework de desenvolvimento web criado com a linguagem de programação Python. Sua simplicidade torna uma escolha interessante para criar aplicações web, APIs e protótipos de forma ágil.
 
-## Características gerais:
+### Características gerais:
 - Minimalista e modular
 - Configuração simples e intuitiva
 - Suporte a extensões para adicionar funcionalidades
@@ -656,6 +661,3 @@ python app.py
 
 - **Django REST Framework (DRF)**: Ideal para projetos de médio a grande porte, com maior estrutura e menos configuração manual.
 - **Flask**: Melhor para aplicações menores, protótipos ou quando se deseja controle completo sobre a configuração.
-
-
-
