@@ -1,10 +1,3 @@
-Desculpe pela confusão! Vou adicionar uma seção explicando sobre o `database.db` e como ele é utilizado no contexto do projeto. Vou incluir o conteúdo relacionado ao uso do **SQLite** para complementar o restante das informações sobre o banco de dados.
-
-Aqui está a versão ajustada, com a explicação sobre o `database.db` incluída:
-
----
-
-```markdown
 # FLASK
 
 O Flask é um microframework de desenvolvimento web criado com a linguagem de programação Python. Sua simplicidade torna uma escolha interessante para criar aplicações web, APIs e protótipos de forma ágil.
@@ -644,7 +637,7 @@ Para rodar a aplicação, execute o seguinte comando:
 python app.py
 ```
 
-Caso não tenha alterado a rota do swagger, verifique  a documentação do Swagger em `http://localhost:8080/apidocs/` para testar as rotas e ver a documentação gerada automaticamente.
+- Caso não tenha alterado a rota do swagger, verifique  a documentação do Swagger em `http://localhost:8080/apidocs/` para testar as rotas e ver a documentação gerada automaticamente.
 
----
+
 
