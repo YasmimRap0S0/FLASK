@@ -188,6 +188,8 @@ flask db upgrade
 - **`db init`**: Inicializa um diretório de migração do banco de dados.
 - **`db migrate -m "Descrição das mudanças"`**: Cria uma migração quando você modifica os modelos.
 - **`db upgrade`**: Aplica as mudanças no banco de dados, criando as tabelas.
+- 
+> Nota: Caso o flask ainda não seja reconhecido, digite 'python -m flask db init' no terminal
 
 Após esses passos, se estiver utilizando o SQLite, o arquivo `database.db` será gerado no diretório do projeto. Você pode verificar a presença desse arquivo, que conterá as tabelas definidas em seus modelos.
 
