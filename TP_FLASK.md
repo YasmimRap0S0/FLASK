@@ -1,7 +1,3 @@
-Claro! Abaixo está o mesmo conteúdo adaptado, com a adição da coluna **tipo** para especificar o tipo dos atributos de cada modelo (entidade):
-
----
-
 ## **Trabalho Prático de Desenvolvimento de Software com Flask e ORM**
 
 ### **Objetivo**
