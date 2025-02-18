@@ -60,12 +60,10 @@ Desenvolver uma API REST para gerenciar os dados, garantindo as seguintes funcio
 ###### **Post**
 - Criar um post: `POST /posts`
 - Listar todos os posts: `GET /posts`
-- Buscar um post pelo ID: `GET /posts/:id`
 
 ###### **Comentário**
 - Criar um comentário: `POST /comentarios`
 - Listar todos os comentários: `GET /comentarios`
-- Excluir um comentário: `DELETE /comentarios/:id`
 
 ---
 
@@ -76,4 +74,3 @@ Desenvolver uma API REST para gerenciar os dados, garantindo as seguintes funcio
 - **Flasgger** para documentação da API (Swagger).
 
 --- 
-
