@@ -639,5 +639,23 @@ python app.py
 
 - Caso não tenha alterado a rota do swagger, verifique  a documentação do Swagger em `http://localhost:8080/apidocs/` para testar as rotas e ver a documentação gerada automaticamente.
 
+# Conclusão
+
+| **Aspecto**               | **Django REST Framework (DRF)**                       | **Flask**                                               |
+|---------------------------|--------------------------------------------------------|---------------------------------------------------------|
+| **Estrutura do Projeto**   | Estrutura rígida e pré-definida | Estrutura mínima e flexível, você escolhe como organizar. |
+| **Tamanho da Aplicação**   | Melhor para aplicações grandes e complexas.            | Ideal para aplicações menores e protótipos.             |
+| **Facilidade de Uso**      | Mais fácil para iniciantes, com convenções claras.     | Mais flexível, mas exige mais decisões e configurações. |
+| **Desempenho**             | Menor desempenho em aplicações pequenas (maior overhead). | Melhor desempenho em aplicações pequenas e simples.     |
+| **Integração com Banco de Dados** | ORM integrado com Django (models) e fácil integração com bancos. | Requer uso de bibliotecas externas (ex: SQLAlchemy).    |
+| **Autenticação e Permissões** | Sistema integrado para autenticação (Token, OAuth, etc.) | Requer bibliotecas externas (ex: Flask-JWT) para autenticação. |
+| **Documentação da API**    | Integração direta com bibliotecas como `drf-yasg` para documentação automática. | Precisa de configurações manuais para documentação (ex: `Flasgger`). |
+| **Suporte a APIs RESTful** | Suporte nativo para APIs RESTful, com endpoints e views. | Precisa de configuração manual das rotas e endpoints.  |
+
+### Resumo:
+
+- **Django REST Framework (DRF)**: Ideal para projetos de médio a grande porte, com maior estrutura e menos configuração manual.
+- **Flask**: Melhor para aplicações menores, protótipos ou quando se deseja controle completo sobre a configuração.
+
 
 
