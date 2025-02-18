@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
 from models.models import db, Pessoa, Trabalho
-from flasgger import Swagger  # type: ignore
 from flask_migrate import Migrate
-from flask_cors import CORS
+from flasgger import Swagger  # type: ignore
 from config import swagger_config, swagger_template
+from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Habilita CORS para todas as rotas
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5433/flask'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -21,7 +21,7 @@ def index():
     return ('<h1>APLICAÇÃO WEB</h1>')
 
 # Rota para criar um trabalho
-@app.route('/trabalhos', methods=['POST'])
+@app.route('/api/trabalhos', methods=['POST'])
 def create_trabalho():
     """
     Cria um novo trabalho
@@ -60,7 +60,7 @@ def create_trabalho():
     return jsonify({'message': 'Trabalho criado com sucesso!'}), 201
 
 # Rota para obter todos os trabalhos
-@app.route('/trabalhos', methods=['GET'])
+@app.route('/api/trabalhos', methods=['GET'])
 def get_trabalhos():
     """
     Retorna todos os trabalhos
