@@ -1,37 +1,89 @@
-from flask import Flask, request, jsonify, render_template
-from flask_migrate import Migrate
+from flask import Flask, request, jsonify
 from models.models import db, Pessoa, Trabalho
 from flasgger import Swagger  # type: ignore
+from flask_migrate import Migrate
 from flask_cors import CORS
+from config import swagger_config, swagger_template
 
 app = Flask(__name__)
 CORS(app)  # Habilita CORS para todas as rotas
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5433/flask'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 migrate = Migrate(app, db)
 
-swagger_config = { ##item não obrigatorio
-    "headers": [],
-    "specs": [
-        {
-            "endpoint": 'apispec_1',
-            "route": '/teste/teste/apispec_1.json',
-            "rule_filter": lambda rule: True,
-            "model_filter": lambda tag: True,
-        }
-    ],
-    "static_url_path": "/flasgger_static",
-    "swagger_ui": True,
-    "specs_route": "/test" ## minha rota pro swagger
-}
-
-swagger = Swagger(app, config=swagger_config)
+swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return ('<h1>APLICAÇÃO WEB</h1>')
+
+# Rota para criar um trabalho
+@app.route('/trabalhos', methods=['POST'])
+def create_trabalho():
+    """
+    Cria um novo trabalho
+    ---
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - cargo
+          properties:
+            cargo:
+              type: string
+              description: Cargo da pessoa
+              example: Engenheiro
+    responses:
+      201:
+        description: Trabalho criado com sucesso
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+      400:
+        description: Requisição inválida
+    """
+    data = request.get_json()
+    if 'cargo' not in data:
+        return jsonify({'message': 'O campo "cargo" é obrigatório.'}), 400
+
+    novo_trabalho = Trabalho(cargo=data['cargo'])
+    db.session.add(novo_trabalho)
+    db.session.commit()
+    return jsonify({'message': 'Trabalho criado com sucesso!'}), 201
+
+# Rota para obter todos os trabalhos
+@app.route('/trabalhos', methods=['GET'])
+def get_trabalhos():
+    """
+    Retorna todos os trabalhos
+    ---
+    responses:
+      200:
+        description: Lista de trabalhos
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              cargo:
+                type: string
+    """
+    trabalhos = Trabalho.query.all()
+    result = [{
+        'id': str(trabalho.id),
+        'cargo': trabalho.cargo
+    } for trabalho in trabalhos]
+    return jsonify(result), 200
 
 # Rotas CRUD para Pessoa
 @app.route('/pessoas', methods=['POST'])
@@ -47,16 +99,15 @@ def create_pessoa():
           type: object
           required:
             - nome
-            - esta_empregado
           properties:
             nome:
               type: string
               description: Nome da pessoa
               example: Nome_Exemplo
-            esta_empregado:
-              type: boolean
-              description: Indica se a pessoa está empregada
-              example: true
+            trabalho_id:
+              type: integer
+              description: ID do trabalho
+              example: 1
     responses:
       201:
         description: Pessoa criada com sucesso
@@ -69,11 +120,14 @@ def create_pessoa():
         description: Requisição inválida
     """
     data = request.get_json()
-    if 'nome' not in data or 'esta_empregado' not in data:
-        return jsonify({'message': 'Os campos "nome" e "esta_empregado" são obrigatórios.'}), 400
+    if 'nome' not in data:
+        return jsonify({'message': 'O campo "nome" é obrigatório.'}), 400
 
-    nova_pessoa = Pessoa(nome=data['nome'], esta_empregado=data['esta_empregado'])
-    db.session.add(nova_pessoa)
+    nova_pessoa = Pessoa(
+        nome=data['nome'],
+        trabalho_id=data.get('trabalho_id')  # Usa get para permitir que trabalho_id seja opcional
+    )
+    db.session.add(nova_pessoa) 
     db.session.commit()
     return jsonify({'message': 'Pessoa criada com sucesso!'}), 201
 
@@ -94,8 +148,11 @@ def get_pessoas():
                 type: string
               nome:
                 type: string
-              esta_empregado:
-                type: boolean
+              trabalho:
+                type: object
+                properties:
+                  cargo:
+                    type: string
     definitions:
       Pessoa:
         type: object
@@ -104,14 +161,21 @@ def get_pessoas():
             type: string
           nome:
             type: string
-          esta_empregado:
-            type: boolean
+          trabalho:
+            type: object
+            properties:
+              cargo:
+                type: string
     """
     pessoas = Pessoa.query.all()
-    result = [{'id': str(pessoa.id), 'nome': pessoa.nome, 'esta_empregado': pessoa.esta_empregado} for pessoa in pessoas]
+    result = [{
+        'id': str(pessoa.id),
+        'nome': pessoa.nome,
+        'trabalho': {
+            'cargo': pessoa.trabalho.cargo
+        } if pessoa.trabalho else None
+    } for pessoa in pessoas]
     return jsonify(result), 200
-
-
 
 @app.route('/pessoas/<int:id>', methods=['PUT'])
 def update_pessoa(id):
@@ -131,16 +195,15 @@ def update_pessoa(id):
           type: object
           required:
             - nome
-            - esta_empregado
           properties:
             nome:
               type: string
               description: Nome da pessoa
-              example: Nome_Atualizado
-            esta_empregado:
-              type: boolean
-              description: Indica se a pessoa está empregada
-              example: false
+              example: nome_Atualizado
+            trabalho_id:
+              type: integer
+              description: ID do trabalho
+              example: 1
     responses:
       200:
         description: Pessoa atualizada com sucesso
@@ -158,7 +221,7 @@ def update_pessoa(id):
         return jsonify({'message': 'Pessoa não encontrada'}), 404
 
     pessoa.nome = data['nome']
-    pessoa.esta_empregado = data['esta_empregado']
+    pessoa.trabalho_id = data.get('trabalho_id') 
     db.session.commit()
     return jsonify({'message': 'Pessoa atualizada com sucesso'}), 200
 
@@ -192,7 +255,6 @@ def delete_pessoa(id):
     db.session.commit()
     return jsonify({'message': 'Pessoa deletada com sucesso'}), 200
 
-
 @app.route('/pessoas/<int:id>', methods=['GET'])
 def get_pessoa(id):
     """
@@ -214,8 +276,13 @@ def get_pessoa(id):
               type: string
             nome:
               type: string
-            esta_empregado:
-              type: boolean
+            trabalho:
+              type: object
+              properties:
+                id:
+                  type: string
+                cargo:
+                  type: string
       404:
         description: Pessoa não existe
     """
@@ -226,7 +293,10 @@ def get_pessoa(id):
     return jsonify({
         'id': str(pessoa.id),
         'nome': pessoa.nome,
-        'esta_empregado': pessoa.esta_empregado
+        'trabalho': {
+            'id': str(pessoa.trabalho.id),
+            'cargo': pessoa.trabalho.cargo
+        } if pessoa.trabalho else None
     }), 200
 
 if __name__ == "__main__":

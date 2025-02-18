@@ -1,65 +1,79 @@
 # FLASK
 
-O Flask é um microframework de desenvolvimento web criado com a linguagem de programação Python. Sua simplicidade e flexibilidade o tornam uma escolha ideal para desenvolvedores que buscam criar aplicações web, APIs e protótipos de forma ágil.
+O Flask é um microframework de desenvolvimento web criado com a linguagem de programação Python. Sua simplicidade torna uma escolha interessante para criar aplicações web, APIs e protótipos de forma ágil.
 
-Características gerais:
-- minimalista e modular 
-- Configuração simples e intuitiva 
-- Suporte a extensões para adicionar funcionalidades 
+## Características gerais:
+- Minimalista e modular
+- Configuração simples e intuitiva
+- Suporte a extensões para adicionar funcionalidades
 
-## SQLAchemy
-biblioteca de mapeamento objeto-relacional (ORM) para Python, que facilita a interação com bancos de dados relacionais
+## SQLAlchemy
+
+Biblioteca de mapeamento objeto-relacional (ORM) para Python, que facilita a interação com bancos de dados relacionais.
 
 ## Pré-requisito
 - Python 3.10 ou superior
 
+## Pré-requisito OPCIONAL
+- pgAdmin4
+
 ### Iniciando Projeto
- 
 
-1. Crie uma pasta com um arquivo .py
-2. Instalar as seguintes dependências em sua pasta de trabalho:
+1. Crie uma pasta com um arquivo `.py`. Você pode dividir alguns trechos do código em pastas/arquivos ou colocá-los em um único arquivo
 
-```python
+Exemplo da estrutura do nosso projeto:
+
+├── FLASK/
+│   ├── models/
+│   │   └── models.py
+├── app.py
+├── config.py
+
+2. Instale as seguintes dependências em sua pasta de trabalho:
+
+```sh
 pip install flask
 pip install flask_sqlalchemy
 pip install SQLAlchemy
 pip install flasgger
 pip install flask_cors
-pip install flask-Migrate
+pip install flask-migrate
 pip install psycopg2
-
 ```
 
-3. Realize os importes no seu arquivo .py
+3. Realize os imports no seu arquivo app.py
 
-```txt
-
-from flask import Flask, request, jsonify, render_template
-from flask_sqlalchemy import SQLAlchemy
-from flasgger import Swagger # type: ignore
-
-
+```python
+from flask import Flask, request, jsonify
+from models.models import db, Pessoa, Trabalho
+from flasgger import Swagger  # type: ignore
+from flask_migrate import Migrate
+from flask_cors import CORS
 ```
 
-- Flask: Utilizamos o Flask para criar a aplicação, request lida com as requisições HTTP, jsonify facilita a criação de respostas JSON, e render_template renderiza templates HTML.<br>
-- SQLAlchemy: Importa o SQLAlchemy, que é um ORM (Object-Relational Mapping) que facilita a interação com o banco de dados.<br>
-- Flasgger: Permite que você documente e explore APIs com uma interface baseada no Swagger UI.<br>
+Explicação dos imports:
+- **Flask**: Utilizamos o Flask para criar a aplicação. O `request` lida com as requisições HTTP, `jsonify` facilita a criação de respostas JSON e `render_template` renderiza templates HTML.
+- **SQLAlchemy**: ORM que facilita a interação com o banco de dados.
+- **Flasgger**: Permite documentar e explorar APIs com uma interface baseada no Swagger UI.
 
-4. Crie uma instância para a aplicação o CORS na sua aplicação
+4. Crie uma instância para a aplicação e habilite o CORS:
 
-```txt
-
+```python
 app = Flask(__name__)
 CORS(app)
-
 ```
 
+> **Nota**: Substitua `usuario`, `senha`, `localhost`, `5433` e `nome_do_banco` pelos valores adequados do seu ambiente.
+
 5. Adicione a URI de conexão do seu banco de dados.
-postgresql://<username>:<password>@<hostname>:<port>/<database_name>
 
-6. 
+```python
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://usuario:senha@localhost:5433/nome_do_banco'
+```
 
+> **Nota**: Substitua `usuario`, `senha`, `localhost`, `5433` e `nome_do_banco` pelos valores adequados do seu ambiente.
 
+---
 
-
+Esse guia fornece as informações básicas para iniciar um projeto Flask utilizando SQLAlchemy. Para continuar, você pode configurar modelos, criar rotas e implementar migrações com `Flask-Migrate`.
 
