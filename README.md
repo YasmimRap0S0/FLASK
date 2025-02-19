@@ -237,7 +237,9 @@ if __name__ == "__main__":
 O arquivo `config.py` contém configurações essenciais tanto para o funcionamento do Swagger quanto para a definição dos modelos e rotas da API. Ele ajuda a personalizar a documentação gerada automaticamente para a sua API.
 
 ```python
-swagger_config = { ## O swagger_config é opcional, e pode ser retirado
+
+
+swagger_config = { ##item não obrigatorio
     "headers": [],
     "specs": [
         {
@@ -252,18 +254,56 @@ swagger_config = { ## O swagger_config é opcional, e pode ser retirado
     "specs_route": "/test" ## rota para documentação do swagger
 }
 
-swagger_template = { ##necessário caso tenha mais de uma classe de modelo
+swagger_template = { ##item recomendável caso tenha mais de uma classe de modelo
     "swagger": "2.0",
     "info": {
-        "title": "API de Pessoa e Trabalho",
-        "description": "Documentação da API de exemplo",
-        "version": "1.0"
+        "title": "API",
+        "description": "API com documentação Swagger",
+        "version": "1.0.0"
     },
     "host": "localhost:8080",
     "basePath": "/",
     "schemes": [
         "http"
     ],
+    "definitions": {
+        "Pessoa": { ## # Definição do modelo Trabalho no swagger
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "esta_empregado": {
+                    "type": "boolean"
+                },
+                "trabalho": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "cargo": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "Trabalho": {  # Definição do modelo Trabalho no swagger
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "cargo": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }
 ```
 
@@ -582,52 +622,6 @@ def get_trabalhos():
         'cargo': trabalho.cargo
     } for trabalho in trabalhos]
     return jsonify(result), 200
-
-# Rotas CRUD para Pessoa
-@app.route('/pessoas', methods=['POST'])
-def create_pessoa():
-    """
-    Cria uma nova pessoa
-    ---
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          required:
-            - nome
-          properties:
-            nome:
-              type: string
-              description: Nome da pessoa
-              example: Nome_Exemplo
-            trabalho_id:
-              type: integer
-              description: ID do trabalho
-              example: 1
-    responses:
-      201:
-        description: Pessoa criada com sucesso
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-      400:
-        description: Requisição inválida
-    """
-    data = request.get_json()
-    if 'nome' not in data:
-        return jsonify({'message': 'O campo "nome" é obrigatório.'}), 400
-
-    nova_pessoa = Pessoa(
-        nome=data['nome'],
-        trabalho_id=data.get('trabalho_id')  # Usa get para permitir que trabalho_id seja opcional
-    )
-    db.session.add(nova_pessoa) 
-    db.session.commit()
-    return jsonify({'message': 'Pessoa criada com sucesso!'}), 201
 ```
 
 ---
