@@ -68,49 +68,8 @@ def create_pessoa():
 
 @app.route('/pessoas', methods=['GET'])
 def get_pessoas():
-    """
-    Retorna nossos amigos
-    ---
-    responses:
-      200:
-        description: Lista de pessoas
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              nome:
-                type: string
-              trabalho:
-                type: object
-                properties:
-                  cargo:
-                    type: string
-    definitions:
-      Pessoa:
-        type: object
-        properties:
-          id:
-            type: string
-          nome:
-            type: string
-          trabalho:
-            type: object
-            properties:
-              cargo:
-                type: string
-    """
     pessoas = Pessoa.query.all()
-    result = [{
-        'id': str(pessoa.id),
-        'nome': pessoa.nome,
-        'trabalho': {
-            'cargo': pessoa.trabalho.cargo
-        } if pessoa.trabalho else None
-    } for pessoa in pessoas]
-    return jsonify(result), 200
+    return jsonify([pessoa.dicionario() for pessoa in pessoas]), 200
 
 @app.route('/pessoas/<int:id>', methods=['PUT'])
 def update_pessoa(id):
@@ -192,48 +151,11 @@ def delete_pessoa(id):
 
 @app.route('/pessoas/<int:id>', methods=['GET'])
 def get_pessoa(id):
-    """
-    Retorna uma pessoa específica
-    ---
-    parameters:
-      - name: id
-        in: path
-        required: true
-        type: integer
-        description: ID da pessoa
-    responses:
-      200:
-        description: Pessoa encontrada
-        schema:
-          type: object
-          properties:
-            id:
-              type: string
-            nome:
-              type: string
-            trabalho:
-              type: object
-              properties:
-                id:
-                  type: string
-                cargo:
-                  type: string
-      404:
-        description: Pessoa não existe
-    """
     pessoa = Pessoa.query.get(id)
     if not pessoa:
         return jsonify({'message': 'Pessoa não existe'}), 404
 
-    return jsonify({
-        'id': str(pessoa.id),
-        'nome': pessoa.nome,
-        'trabalho': {
-            'id': str(pessoa.trabalho.id),
-            'cargo': pessoa.trabalho.cargo
-        } if pessoa.trabalho else None
-    }), 200
-
+    return jsonify([pessoa.dicionario()]),
 # Rota para criar um trabalho
 @app.route('/trabalhos', methods=['POST'])
 def create_trabalho():
@@ -275,28 +197,8 @@ def create_trabalho():
 
 @app.route('/trabalhos', methods=['GET'])
 def get_trabalhos():
-    """
-    Retorna todos os trabalhos
-    ---
-    responses:
-      200:
-        description: Lista de trabalhos
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              cargo:
-                type: string
-    """
     trabalhos = Trabalho.query.all()
-    result = [{
-        'id': str(trabalho.id),
-        'cargo': trabalho.cargo
-    } for trabalho in trabalhos]
-    return jsonify(result), 200
+    return jsonify([trabalho.dicionario() for trabalho in trabalhos]), 200
 
 
 if __name__ == "__main__":
