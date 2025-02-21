@@ -1,8 +1,13 @@
-# FLASK
+
+## **PROJETO FLASK**
+- Integrantes: Anna Julia, Fabiana Campos, Larissa Samara, Rick Hill e Yasmim Raposo<br>
+- Acesso a TP: [TP](https://github.com/YasmimRap0S0/FLASK/blob/main/TP_FLASK.md)
+
+## **FLASK**
 
 O Flask é um microframework de desenvolvimento web criado com a linguagem de programação Python. Sua simplicidade torna uma escolha interessante para criar aplicações web, APIs e protótipos de forma ágil.
 
-## Características gerais:
+### Características gerais:
 - Minimalista e modular
 - Configuração simples e intuitiva
 - Suporte a extensões para adicionar funcionalidades
@@ -175,15 +180,15 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Banco de dado
 Para criar as tabelas no banco de dados, execute os seguintes comandos no terminal:
 
 ```bash
-flask db init
-flask db migrate
-flask db upgrade
+pyhon -m flask db init
+pyhon -m flask db migrate
+pyhon -m flask db upgrade
 ```
 
 - **`db init`**: Inicializa um diretório de migração do banco de dados.
 - **`db migrate -m "Descrição das mudanças"`**: Cria uma migração quando você modifica os modelos.
 - **`db upgrade`**: Aplica as mudanças no banco de dados, criando as tabelas.
-
+  
 Após esses passos, se estiver utilizando o SQLite, o arquivo `database.db` será gerado no diretório do projeto. Você pode verificar a presença desse arquivo, que conterá as tabelas definidas em seus modelos.
 
 ---
@@ -232,7 +237,9 @@ if __name__ == "__main__":
 O arquivo `config.py` contém configurações essenciais tanto para o funcionamento do Swagger quanto para a definição dos modelos e rotas da API. Ele ajuda a personalizar a documentação gerada automaticamente para a sua API.
 
 ```python
-swagger_config = { ## O swagger_config é opcional, e pode ser retirado
+
+
+swagger_config = { ##item não obrigatorio
     "headers": [],
     "specs": [
         {
@@ -247,18 +254,56 @@ swagger_config = { ## O swagger_config é opcional, e pode ser retirado
     "specs_route": "/test" ## rota para documentação do swagger
 }
 
-swagger_template = { ##necessário caso tenha mais de uma classe de modelo
+swagger_template = { ##item recomendável caso tenha mais de uma classe de modelo
     "swagger": "2.0",
     "info": {
-        "title": "API de Pessoa e Trabalho",
-        "description": "Documentação da API de exemplo",
-        "version": "1.0"
+        "title": "API",
+        "description": "API com documentação Swagger",
+        "version": "1.0.0"
     },
     "host": "localhost:8080",
     "basePath": "/",
     "schemes": [
         "http"
     ],
+    "definitions": {
+        "Pessoa": { ## # Definição do modelo Trabalho no swagger
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "esta_empregado": {
+                    "type": "boolean"
+                },
+                "trabalho": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "cargo": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "Trabalho": {  # Definição do modelo Trabalho no swagger
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "cargo": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }
 ```
 
@@ -577,52 +622,6 @@ def get_trabalhos():
         'cargo': trabalho.cargo
     } for trabalho in trabalhos]
     return jsonify(result), 200
-
-# Rotas CRUD para Pessoa
-@app.route('/pessoas', methods=['POST'])
-def create_pessoa():
-    """
-    Cria uma nova pessoa
-    ---
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          required:
-            - nome
-          properties:
-            nome:
-              type: string
-              description: Nome da pessoa
-              example: Nome_Exemplo
-            trabalho_id:
-              type: integer
-              description: ID do trabalho
-              example: 1
-    responses:
-      201:
-        description: Pessoa criada com sucesso
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-      400:
-        description: Requisição inválida
-    """
-    data = request.get_json()
-    if 'nome' not in data:
-        return jsonify({'message': 'O campo "nome" é obrigatório.'}), 400
-
-    nova_pessoa = Pessoa(
-        nome=data['nome'],
-        trabalho_id=data.get('trabalho_id')  # Usa get para permitir que trabalho_id seja opcional
-    )
-    db.session.add(nova_pessoa) 
-    db.session.commit()
-    return jsonify({'message': 'Pessoa criada com sucesso!'}), 201
 ```
 
 ---
@@ -639,5 +638,20 @@ python app.py
 
 - Caso não tenha alterado a rota do swagger, verifique  a documentação do Swagger em `http://localhost:8080/apidocs/` para testar as rotas e ver a documentação gerada automaticamente.
 
+# Conclusão
 
+| **Aspecto**               | **Django REST Framework (DRF)**                       | **Flask**                                               |
+|---------------------------|--------------------------------------------------------|---------------------------------------------------------|
+| **Estrutura do Projeto**   | Estrutura rígida e pré-definida | Estrutura mínima e flexível, você escolhe como organizar. |
+| **Tamanho da Aplicação**   | Melhor para aplicações grandes e complexas.            | Ideal para aplicações menores e protótipos.             |
+| **Facilidade de Uso**      | Mais fácil para iniciantes, com convenções claras.     | Mais flexível, mas exige mais decisões e configurações. |
+| **Desempenho**             | Menor desempenho em aplicações pequenas (maior overhead). | Melhor desempenho em aplicações pequenas e simples.     |
+| **Integração com Banco de Dados** | ORM integrado com Django (models) e fácil integração com bancos. | Requer uso de bibliotecas externas (ex: SQLAlchemy).    |
+| **Autenticação e Permissões** | Sistema integrado para autenticação (Token, OAuth, etc.) | Requer bibliotecas externas (ex: Flask-JWT) para autenticação. |
+| **Documentação da API**    | Integração direta com bibliotecas como `drf-yasg` para documentação automática. | Precisa de configurações manuais para documentação (ex: `Flasgger`). |
+| **Suporte a APIs RESTful** | Suporte nativo para APIs RESTful, com endpoints e views. | Precisa de configuração manual das rotas e endpoints.  |
 
+### Resumo:
+
+- **Django REST Framework (DRF)**: Ideal para projetos de médio a grande porte, com maior estrutura e menos configuração manual.
+- **Flask**: Melhor para aplicações menores, protótipos ou quando se deseja controle completo sobre a configuração.
