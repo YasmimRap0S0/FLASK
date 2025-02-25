@@ -37,9 +37,6 @@ swagger_template = { ##item recomendável caso tenha mais de uma classe de model
                 "nome": {
                     "type": "string"
                 },
-                "esta_empregado": {
-                    "type": "boolean"
-                },
                 "trabalho": {
                     "type": "object",
                     "properties": {

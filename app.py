@@ -1,15 +1,14 @@
 from flask import Flask, request, jsonify
 from models.models import db, Pessoa, Trabalho
-from flask_migrate import Migrate
 from flasgger import Swagger  # type: ignore
-from config import swagger_config, swagger_template
+from flask_migrate import Migrate
 from flask_cors import CORS
+from config import swagger_config, swagger_template
 
 app = Flask(__name__)
 CORS(app)  # Habilita CORS para todas as rotas
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Banco de dados SQLite
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -68,8 +67,49 @@ def create_pessoa():
 
 @app.route('/pessoas', methods=['GET'])
 def get_pessoas():
+    """
+    Retorna nossos amigos
+    ---
+    responses:
+      200:
+        description: Lista de pessoas
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              nome:
+                type: string
+              trabalho:
+                type: object
+                properties:
+                  cargo:
+                    type: string
+    definitions:
+      Pessoa:
+        type: object
+        properties:
+          id:
+            type: string
+          nome:
+            type: string
+          trabalho:
+            type: object
+            properties:
+              cargo:
+                type: string
+    """
     pessoas = Pessoa.query.all()
-    return jsonify([pessoa.dicionario() for pessoa in pessoas]), 200
+    result = [{
+        'id': str(pessoa.id),
+        'nome': pessoa.nome,
+        'trabalho': {
+            'cargo': pessoa.trabalho.cargo
+        } if pessoa.trabalho else None
+    } for pessoa in pessoas]
+    return jsonify(result), 200
 
 @app.route('/pessoas/<int:id>', methods=['PUT'])
 def update_pessoa(id):
@@ -151,11 +191,48 @@ def delete_pessoa(id):
 
 @app.route('/pessoas/<int:id>', methods=['GET'])
 def get_pessoa(id):
+    """
+    Retorna uma pessoa específica
+    ---
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+        description: ID da pessoa
+    responses:
+      200:
+        description: Pessoa encontrada
+        schema:
+          type: object
+          properties:
+            id:
+              type: string
+            nome:
+              type: string
+            trabalho:
+              type: object
+              properties:
+                id:
+                  type: string
+                cargo:
+                  type: string
+      404:
+        description: Pessoa não existe
+    """
     pessoa = Pessoa.query.get(id)
     if not pessoa:
         return jsonify({'message': 'Pessoa não existe'}), 404
 
-    return jsonify([pessoa.dicionario()]),
+    return jsonify({
+        'id': str(pessoa.id),
+        'nome': pessoa.nome,
+        'trabalho': {
+            'id': str(pessoa.trabalho.id),
+            'cargo': pessoa.trabalho.cargo
+        } if pessoa.trabalho else None
+    }), 200
+
 # Rota para criar um trabalho
 @app.route('/trabalhos', methods=['POST'])
 def create_trabalho():
@@ -195,11 +272,31 @@ def create_trabalho():
     db.session.commit()
     return jsonify({'message': 'Trabalho criado com sucesso!'}), 201
 
+# Rota para obter todos os trabalhos
 @app.route('/trabalhos', methods=['GET'])
 def get_trabalhos():
+    """
+    Retorna todos os trabalhos
+    ---
+    responses:
+      200:
+        description: Lista de trabalhos
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              cargo:
+                type: string
+    """
     trabalhos = Trabalho.query.all()
-    return jsonify([trabalho.dicionario() for trabalho in trabalhos]), 200
-
+    result = [{
+        'id': str(trabalho.id),
+        'cargo': trabalho.cargo
+    } for trabalho in trabalhos]
+    return jsonify(result), 200
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080, host='0.0.0.0')
