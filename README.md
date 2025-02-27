@@ -111,12 +111,6 @@ class Trabalho(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cargo = db.Column(db.String(100), nullable=True)
 
-    def dicionario(self):
-        return {
-            'id': self.id,
-            'cargo': self.cargo,
-        }
-
 # Modelo Pessoa
 class Pessoa(db.Model):
     __tablename__ = 'Pessoa'
@@ -124,14 +118,6 @@ class Pessoa(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     trabalho_id = db.Column(db.Integer, db.ForeignKey('Trabalho.id', ondelete='CASCADE'), nullable=True)
     trabalho = db.relationship('Trabalho', backref=db.backref('pessoas_cargos', lazy=True))
-
-    def dicionario(self):
-        return {
-            'id': str(self.id),
-            'nome': self.nome,
-            'trabalho_id': str(self.trabalho_id) if self.trabalho_id else None,
-            'trabalho': self.trabalho.dicionario() if self.trabalho else None
-        }
 ```
 
 ### 2.3 Configuração do Banco de Dados
@@ -180,9 +166,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Banco de dado
 Para criar as tabelas no banco de dados, execute os seguintes comandos no terminal:
 
 ```bash
-pyhon -m flask db init
-pyhon -m flask db migrate
-pyhon -m flask db upgrade
+python -m flask db init
+python -m flask db migrate
+python -m flask db upgrade
 ```
 
 - **`db init`**: Inicializa um diretório de migração do banco de dados.
